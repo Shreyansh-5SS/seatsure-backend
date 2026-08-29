@@ -1,0 +1,12 @@
+package com.seatsure.backend.repository;
+
+import com.seatsure.backend.entity.User;
+import org.springframework.data.jpa.repository.JpaRepository;
+import org.springframework.stereotype.Repository;
+import java.util.UUID;
+
+@Repository
+public interface UserRepository extends JpaRepository<User, UUID> {
+    // Spring Data JPA magically writes the SQL: SELECT COUNT(*) > 0 FROM users WHERE email = ?
+    boolean existsByEmail(String email);
+}
