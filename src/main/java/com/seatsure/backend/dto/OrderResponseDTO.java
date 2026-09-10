@@ -6,7 +6,7 @@ import java.time.OffsetDateTime;
 import java.util.List;
 import java.util.UUID;
 
-public record BookingResponseDTO(
+public record OrderResponseDTO(
         UUID orderId, // Changed to Order ID!
         String movieTitle,
         OffsetDateTime showTime,

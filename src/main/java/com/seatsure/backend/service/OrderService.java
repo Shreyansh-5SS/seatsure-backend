@@ -1,7 +1,7 @@
 package com.seatsure.backend.service;
 
-import com.seatsure.backend.dto.BookingRequestDTO;
-import com.seatsure.backend.dto.BookingResponseDTO;
+import com.seatsure.backend.dto.OrderRequestDTO;
+import com.seatsure.backend.dto.OrderResponseDTO;
 import com.seatsure.backend.entity.Booking;
 import com.seatsure.backend.entity.Order;
 import com.seatsure.backend.entity.Screening;
@@ -22,17 +22,17 @@ import java.util.List;
 import java.util.UUID;
 
 @Service
-public class BookingService {
+public class OrderService {
 
     private final OrderRepository orderRepository;
     private final UserRepository userRepository;
     private final ScreeningRepository screeningRepository;
     private final SeatRepository seatRepository; // Added Seat Repository!
 
-    public BookingService(OrderRepository orderRepository,
-                          UserRepository userRepository,
-                          ScreeningRepository screeningRepository,
-                          SeatRepository seatRepository) {
+    public OrderService(OrderRepository orderRepository,
+                        UserRepository userRepository,
+                        ScreeningRepository screeningRepository,
+                        SeatRepository seatRepository) {
         this.orderRepository = orderRepository;
         this.userRepository = userRepository;
         this.screeningRepository = screeningRepository;
@@ -40,7 +40,7 @@ public class BookingService {
     }
 
     @Transactional // The ACID Vault!
-    public BookingResponseDTO createBooking(BookingRequestDTO request) {
+    public OrderResponseDTO createOrder(OrderRequestDTO request) {
 
         User user = userRepository.findById(request.userId())
                 .orElseThrow(() -> new RuntimeException("User not found!"));
@@ -82,7 +82,7 @@ public class BookingService {
                 .map(Booking::getId)
                 .toList();
 
-        return new BookingResponseDTO(
+        return new OrderResponseDTO(
                 savedOrder.getId(),
                 screening.getMovie().getTitle(),
                 screening.getStartTime(),
