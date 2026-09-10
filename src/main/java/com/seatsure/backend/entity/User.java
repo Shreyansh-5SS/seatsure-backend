@@ -32,6 +32,10 @@ public class User {
     public User(String email, String passwordHash) {
         this.email = email;
         this.passwordHash = passwordHash;
+    }
+
+    @PrePersist
+    protected void onCreate() {
         this.createdAt = OffsetDateTime.now();
     }
 

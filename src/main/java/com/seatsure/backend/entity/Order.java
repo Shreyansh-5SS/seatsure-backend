@@ -2,40 +2,37 @@ package com.seatsure.backend.entity;
 
 import com.seatsure.backend.entity.enums.ReservationStatus;
 import jakarta.persistence.*;
+import java.math.BigDecimal;
 import java.time.OffsetDateTime;
+import java.util.List;
 import java.util.UUID;
 
 @Entity
-@Table(name = "bookings")
-public class Booking {
+@Table(name = "orders")
+public class Order {
 
     @Id
     @GeneratedValue(strategy = GenerationType.UUID)
     private UUID id;
 
-    // Notice: The User field is gone! It inherits from Order.
-
-    @ManyToOne(fetch = FetchType.LAZY)
-    @JoinColumn(name = "seat_id", nullable = false)
-    private Seat seat;
-
-    @ManyToOne(fetch = FetchType.LAZY)
-    @JoinColumn(name = "screening_id", nullable = false)
-    private Screening screening;
-
     @Enumerated(EnumType.STRING)
     @Column(nullable = false)
     private ReservationStatus status;
 
+    @ManyToOne(fetch = FetchType.LAZY)
+    @JoinColumn(name = "user_id", nullable = false)
+    private User user;
+
+    @Column(name = "total_amount", nullable = false)
+    private BigDecimal totalAmount;
+
     @Column(name = "created_at", nullable = false, updatable = false)
     private OffsetDateTime createdAt;
 
-    // Added nullable = false to match the DB
-    @ManyToOne(fetch = FetchType.LAZY)
-    @JoinColumn(name = "order_id", nullable = false)
-    private Order order;
+    @OneToMany(mappedBy = "order", cascade = {CascadeType.PERSIST, CascadeType.MERGE})
+    private List<Booking> bookings;
 
-    public Booking() {}
+    public Order() {}
 
     @PrePersist
     protected void onCreate() {
@@ -45,18 +42,18 @@ public class Booking {
     // Getters and Setters
     public UUID getId() { return id; }
 
-    public Seat getSeat() { return seat; }
-    public void setSeat(Seat seat) { this.seat = seat; }
+    public User getUser() { return user; }
+    public void setUser(User user) { this.user = user; }
 
-    public Screening getScreening() { return screening; }
-    public void setScreening(Screening screening) { this.screening = screening; }
+    public BigDecimal getTotalAmount() { return totalAmount; }
+    public void setTotalAmount(BigDecimal totalAmount) { this.totalAmount = totalAmount; }
 
     public ReservationStatus getStatus() { return status; }
     public void setStatus(ReservationStatus status) { this.status = status; }
 
-    public Order getOrder() { return order; }
-    public void setOrder(Order order) { this.order = order; }
-
     public OffsetDateTime getCreatedAt() { return createdAt; }
     public void setCreatedAt(OffsetDateTime createdAt) { this.createdAt = createdAt; }
+
+    public List<Booking> getBookings() { return bookings; }
+    public void setBookings(List<Booking> bookings) { this.bookings = bookings; }
 }

@@ -12,24 +12,25 @@ public class Payment {
     @GeneratedValue(strategy = GenerationType.UUID)
     private UUID id;
 
-    // The Magic 1-to-1 Relationship!
+    // 🚨 THE FIX: Pointing to Order instead of Booking!
+    // Notice we added unique = true to match Claude's strict DB rules
     @OneToOne(fetch = FetchType.LAZY)
-    @JoinColumn(name = "booking_id", nullable = false, unique = true)
-    private Booking booking;
+    @JoinColumn(name = "order_id", nullable = false, unique = true)
+    private Order order;
 
-    @Column(nullable = false, precision = 10, scale = 2)
+    @Column(nullable = false)
     private BigDecimal amount;
 
     @Column(nullable = false)
-    private String status = "PENDING";
+    private String status;
 
     public Payment() {}
 
     // Getters and Setters
     public UUID getId() { return id; }
 
-    public Booking getBooking() { return booking; }
-    public void setBooking(Booking booking) { this.booking = booking; }
+    public Order getOrder() { return order; }
+    public void setOrder(Order order) { this.order = order; }
 
     public BigDecimal getAmount() { return amount; }
     public void setAmount(BigDecimal amount) { this.amount = amount; }
