@@ -8,6 +8,7 @@ import com.seatsure.backend.entity.Screening;
 import com.seatsure.backend.entity.Seat;
 import com.seatsure.backend.entity.User;
 import com.seatsure.backend.entity.enums.ReservationStatus;
+import com.seatsure.backend.exception.ResourceNotFoundException;
 import com.seatsure.backend.repository.OrderRepository;
 import com.seatsure.backend.repository.ScreeningRepository;
 import com.seatsure.backend.repository.SeatRepository;
@@ -43,10 +44,12 @@ public class OrderService {
     public OrderResponseDTO createOrder(OrderRequestDTO request) {
 
         User user = userRepository.findById(request.userId())
-                .orElseThrow(() -> new RuntimeException("User not found!"));
+                .orElseThrow(() -> new ResourceNotFoundException(
+                        "User not found: " + request.userId()));
 
         Screening screening = screeningRepository.findById(request.screeningId())
-                .orElseThrow(() -> new RuntimeException("Screening not found!"));
+                .orElseThrow(() -> new ResourceNotFoundException(
+                        "Screening not found: " + request.screeningId()));
 
         // BigDecimal math fix
         BigDecimal pricePerSeat = new BigDecimal("250.00");
@@ -61,9 +64,9 @@ public class OrderService {
 
         for (UUID seatId : request.seatIds()) {
 
-            // Fetching the actual Seat!
             Seat seat = seatRepository.findById(seatId)
-                    .orElseThrow(() -> new RuntimeException("Seat not found!"));
+                    .orElseThrow(() -> new ResourceNotFoundException(
+                            "Seat not found: " + seatId));
 
             Booking booking = new Booking();
             booking.setOrder(order);
