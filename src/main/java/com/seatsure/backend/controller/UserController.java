@@ -4,6 +4,7 @@ import com.seatsure.backend.dto.UserRegistrationRequestDTO;
 import com.seatsure.backend.dto.UserResponseDTO;
 import com.seatsure.backend.entity.User;
 import com.seatsure.backend.service.UserService;
+import jakarta.validation.Valid;
 import org.springframework.web.bind.annotation.*;
 import java.util.List;
 
@@ -26,7 +27,7 @@ public class UserController {
     }
 
     @PostMapping
-    public UserResponseDTO createUser(@RequestBody UserRegistrationRequestDTO requestDTO) {
+    public UserResponseDTO createUser(@Valid @RequestBody UserRegistrationRequestDTO requestDTO) {
         return userService.registerUser(requestDTO);
     }
 }

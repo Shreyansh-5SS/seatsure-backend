@@ -8,6 +8,7 @@ import com.seatsure.backend.entity.Screening;
 import com.seatsure.backend.entity.Seat;
 import com.seatsure.backend.entity.User;
 import com.seatsure.backend.entity.enums.ReservationStatus;
+import com.seatsure.backend.exception.InvalidRequestException;
 import com.seatsure.backend.exception.ResourceNotFoundException;
 import com.seatsure.backend.repository.OrderRepository;
 import com.seatsure.backend.repository.ScreeningRepository;
@@ -18,9 +19,7 @@ import org.springframework.transaction.annotation.Transactional;
 
 import java.math.BigDecimal;
 import java.time.OffsetDateTime;
-import java.util.ArrayList;
-import java.util.List;
-import java.util.UUID;
+import java.util.*;
 
 @Service
 public class OrderService {
@@ -42,6 +41,11 @@ public class OrderService {
 
     @Transactional // The ACID Vault!
     public OrderResponseDTO createOrder(OrderRequestDTO request) {
+
+        Set<UUID> uniqueSeatIds = new LinkedHashSet<>(request.seatIds());
+        if (uniqueSeatIds.size() != request.seatIds().size()) {
+            throw new InvalidRequestException("Duplicate seat IDs in request");
+        }
 
         User user = userRepository.findById(request.userId())
                 .orElseThrow(() -> new ResourceNotFoundException(
