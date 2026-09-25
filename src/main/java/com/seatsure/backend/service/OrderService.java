@@ -66,22 +66,23 @@ public class OrderService {
         order.setCreatedAt(OffsetDateTime.now());
         order.setBookings(new ArrayList<>());
 
-        for (UUID seatId : request.seatIds()) {
+        List<UUID> seatIds = request.seatIds();
 
-            Seat seat = seatRepository.findById(seatId)
-                    .orElseThrow(() -> new ResourceNotFoundException(
-                            "Seat not found: " + seatId));
+        List<Seat> seats = seatRepository.findAllByIdInAndScreenId(
+                seatIds, screening.getScreen().getId());
 
+        if (seats.size() != seatIds.size()) {
+            throw new InvalidRequestException(
+                    "One or more seats do not exist or do not belong to this screening's screen");
+        }
+        for (Seat seat : seats) {
             Booking booking = new Booking();
             booking.setOrder(order);
             booking.setScreening(screening);
-            booking.setSeat(seat); // Attaching the seat so it saves correctly
+            booking.setSeat(seat);
             booking.setStatus(ReservationStatus.PENDING);
-            booking.setCreatedAt(OffsetDateTime.now());
-
             order.getBookings().add(booking);
         }
-
         // Saves Order AND all attached Bookings automatically
         Order savedOrder = orderRepository.save(order);
 
